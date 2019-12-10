@@ -9,31 +9,28 @@ import java.util.*;
 public class FracCalc {
 
 	public static void main(String[] args) {
-		// TODO: Read the input from the user and call produceAnswer with an equation
+		// Taking user input and using their input as parameter to calculate
 		Scanner in = new Scanner(System.in);
 		System.out.println("Welcome to the fraction calculator");
 		System.out.println("Underscore divides numbers and their fractions for example 1_1/2");
 		System.out.println("Spaces divide different numbers for example 1 + 2_1/2");
-		System.out.print("Enter an expression: ");
-		String input = in.nextLine();
-		// produceAnswer(input);
-		System.out.println(produceAnswer(input));
+		System.out.print("Enter an expression or \"quit\": ");
+		boolean running = true;
+		while ( running ) {
+			String input = in.nextLine();
+			if (input.equals("quit")) {
+				running = false;
+			} else {
+				System.out.println(produceAnswer(input));
+			}
+		}
+		System.out.println("quit");
 		in.close();
 	}
 
-	// ** IMPORTANT ** DO NOT DELETE THIS FUNCTION. This function will be used to
-	// test your code
-	// This function takes a String 'input' and produces the result
-	//
-	// input is a fraction string that needs to be evaluated. For your program, this
-	// will be the user input.
-	// e.g. input ==> "1/2 + 3/4"
-	//
-	// The function should return the result of the fraction after it has been
-	// calculated
-	// e.g. return ==> "1_1/4"
 	public static String produceAnswer(String input) {
-		// TODO: Implement this function to produce the solution to the input
+		// Running the user input through multiple methods to pull out and parse certain
+		// parts of the string
 		int space1 = input.indexOf(" ");
 		String first = input.substring(0, space1);
 		char op = input.charAt(space1 + 1);
@@ -46,19 +43,11 @@ public class FracCalc {
 		int numer2 = getNumer(last, sign2);
 		int denom1 = getDenom(first);
 		int denom2 = getDenom(last);
-		System.out.println(sign1);
-		System.out.println(sign2);
-		System.out.println(whole1);
-		System.out.println(whole2);
-		System.out.println(numer1);
-		System.out.println(numer2);
-		System.out.println(denom1);
-		System.out.println(denom2);
-		System.out.println();
+
+		// Converting all the numbers into improper fractions
 		numer1 = sign1 * getImproper(whole1, numer1, denom1);
-		System.out.println(numer1);
 		numer2 = sign2 * getImproper(whole2, numer2, denom2);
-		System.out.println(numer2);
+		// Combining the integers and changing it back to a String
 		String combined = "";
 		if (op == '+') {
 			combined = add(numer1, numer2, denom1, denom2);
@@ -74,15 +63,15 @@ public class FracCalc {
 				denom2 = -denom2;
 			}
 			combined = multiply(numer1, denom2, denom1, numer2);
-			System.out.println(combined);
 		}
+		// Getting sign of the number (positive or negative) and adding to front of String
 		int sign = getSign(combined);
 		int numer = getNumer(combined, sign);
 		int denom = getDenom(combined);
 		String result = simplify(sign, numer, denom);
 		return result;
 	}
-
+	//
 	public static int getSign(String whole) {
 		if (whole.charAt(0) != '-') {
 			return 1;
@@ -144,10 +133,11 @@ public class FracCalc {
 		int d = d1 * d2;
 		return n + "/" + d;
 	}
+
 	public static String simplify(int sign, int n, int d) {
 		int whole = n / d;
 		n = n % d;
-		for (int i = 2; i < n; i++) {
+		for (int i = 2; i <= n; i++) {
 			while (n % i == 0 && d % i == 0) {
 				n /= i;
 				d /= i;
@@ -157,10 +147,18 @@ public class FracCalc {
 		if (sign == -1) {
 			sign_str = "-";
 		}
-		if (n > 0) {
-			return sign_str + whole + "_" + n + "/" + d;
+		if (whole != 0) {
+			if (n > 0) {
+				return sign_str + whole + "_" + n + "/" + d;
+			} else {
+				return sign_str + whole;
+			}
 		} else {
-			return sign_str + whole;
-		}
+			if (n != 0) {
+				return sign_str + n + "/" + d;
+			} else {
+				return "0";
+			}			
+		} 
 	}
 }
